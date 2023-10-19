@@ -17,7 +17,7 @@ body {
   background-color: dodgerblue;
 }
 
-.App {
+.app {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -112,4 +112,11 @@ button {
 
 .line {
   display: inline-block;
+}
+
+.flexGrow {
+  flex-grow: 1;
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-end;
 }
