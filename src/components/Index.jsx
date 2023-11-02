@@ -1,13 +1,15 @@
+import { Link } from "react-router-dom";
+
 const Index = () => {
   return (
     <section>
-      <h1>Home</h1>
-      <p>Welcome to Dashboard</p>
+      <h1>React Auth App</h1>
+      <p>simulation for role based authentication and authorization</p>
       <span className="line">
-        <a href="#">View Users List</a>
+        <Link to="/login">Login</Link>
       </span>
       <span className="line">
-        <a href="#">View Employees List</a>
+        <Link to="/register">Register</Link>
       </span>
     </section>
   )

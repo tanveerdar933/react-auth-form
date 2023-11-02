@@ -1,18 +1,20 @@
-import { useRef, useState, useEffect, useContext } from 'react';
-import AuthContext from "../contexts/AuthProvider";
-import { LOGIN_URL } from "../utils/urlList";
-import axios from '../api/axios';
-import { Link } from 'react-router-dom';
+import { useRef, useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { setCredentials } from '../features/auth/authSlice';
+import { useLoginMutation } from '../features/auth/authApiSlice';
 
 const Login = () => {
-  const { setAuth } = useContext(AuthContext);
   const userRef = useRef();
   const errRef = useRef();
 
   const [user, setUser] = useState('');
   const [pwd, setPwd] = useState('');
   const [errMsg, setErrMsg] = useState('');
-  const [success, setSuccess] = useState(false);
+
+  const [login, { isLoading }] = useLoginMutation();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     userRef.current.focus();
@@ -26,27 +28,17 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.post(LOGIN_URL,
-        JSON.stringify({ user, pwd }),
-        {
-          headers: { 'Content-Type': 'application/json' },
-          withCredentials: true
-        }
-      );
-      console.log(JSON.stringify(response?.data));
-      //console.log(JSON.stringify(response));
-      const accessToken = response?.data?.accessToken;
-      const roles = response?.data?.roles;
-      setAuth({ user, pwd, roles, accessToken });
+      const userData = await login({ user, pwd }).unwrap()
+      dispatch(setCredentials({ ...userData, user }))
       setUser('');
       setPwd('');
-      setSuccess(true);
+      navigate('/dashboard');
     } catch (err) {
       if (!err?.response) {
         setErrMsg('No Server Response');
-      } else if (err.response?.status === 400) {
+      } else if (err?.originalStatus === 400) {
         setErrMsg('Missing Username or Password');
-      } else if (err.response?.status === 401) {
+      } else if (err?.originalStatus === 401) {
         setErrMsg('Unauthorized');
       } else {
         setErrMsg('Login Failed');
@@ -57,13 +49,9 @@ const Login = () => {
 
   return (
     <>
-      {success ? (
+      {isLoading ? (
         <section>
-          <h1>You are logged in!</h1>
-          <br />
-          <p>
-            <a href="#">Go to Home</a>
-          </p>
+          <h1>Loading...</h1>
         </section>
       ) : (
         <section>
