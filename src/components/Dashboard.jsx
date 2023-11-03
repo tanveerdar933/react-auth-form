@@ -1,10 +1,9 @@
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { selectCurrentUser, selectCurrentToken } from "../features/auth/authSlice";
+import { selectCurrentUser } from "../features/auth/authSlice";
 
 const Dashboard = () => {
   const user = useSelector(selectCurrentUser);
-  const token = useSelector(selectCurrentToken);
 
   return (
     <section>
@@ -13,6 +12,9 @@ const Dashboard = () => {
       <span className="line">
         <Link to="/usersList">Users List</Link>
       </span>
+      <div>
+        <button type="button">Logout</button>
+      </div>
     </section>
   )
 }
